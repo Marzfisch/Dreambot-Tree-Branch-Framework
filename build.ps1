@@ -23,7 +23,8 @@ try {
     $taskSources = @(Get-ChildItem -LiteralPath (Join-Path $PSScriptRoot 'src') -Recurse -Filter '*.java' |
         ForEach-Object FullName)
     if ($taskSources.Count -eq 0) { throw 'No Java sources found.' }
-    & $taskJavac --release 11 -encoding UTF-8 -Xlint:all -classpath "$taskRepository\*" -d $taskClasses @taskSources
+    # DreamBot dependency manifests reference optional absent JARs; skip only path lint.
+    & $taskJavac --release 11 -encoding UTF-8 -Xlint:all,-path -Werror -classpath "$taskRepository\*" -d $taskClasses @taskSources
     if ($LASTEXITCODE -ne 0) { throw 'Java compilation failed.' }
     $taskArtifact = Join-Path $taskOutput 'TreeBranchExample.jar'
     & $taskJar --create --file $taskArtifact -C $taskClasses .

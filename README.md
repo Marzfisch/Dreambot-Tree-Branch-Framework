@@ -55,10 +55,24 @@ custom users should migrate their paint customization into `ScriptPaint`.
 
 ## Validation
 
-The API signatures were checked against the locally installed DreamBot client JAR.
-The build requires a JDK; a JRE alone cannot compile the example.
-Before using a newly built JAR, smoke-test normal launch and QuickStart, login/loading,
-walking to the Grand Exchange, arrival/idle behavior, and script restart.
+Compiled with Temurin JDK 11.0.32.1 against the installed DreamBot client and
+repository2 dependencies, targeting Java 11. Compiler warnings fail the build;
+only classpath lint is disabled because third-party manifests reference optional
+JARs absent from DreamBot's installation.
+
+Run the offline regression checks (also rebuilds the script):
+
+```powershell
+.\test.ps1 -JdkHome 'C:\Java\jdk-11'
+```
+
+Verified: startup and QuickStart do not duplicate branches; native leaves resolve
+their owning script; the first valid leaf wins; repeated paint output is stable;
+caller graphics are preserved; empty/null paint inputs are safe; runtime resets.
+Tests are kept outside src and are excluded from the script JAR.
+
+These are offline checks, not a live game test. In-client login/loading, walking,
+arrival/idle, and restart should still be smoke-tested before normal use.
 
 ## References
 
